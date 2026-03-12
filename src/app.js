@@ -16,6 +16,11 @@ const transactionRoutes = require("../src/routes/transaction.routes")
 /**
  * - Use Routes
  */
+app.get("/", (req,res)=>{
+    res.send(200).json({
+        message: "Server is up and running"
+    })
+})
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/accounts", accoutnRoutes);
 app.use("/api/v1/transactions", transactionRoutes);
