@@ -39,9 +39,13 @@ const sendEmail = async (to, subject, text, html) => {
   }
 };
 
+/**
+ * User Registration Email
+ */
+
 async function sendRegistrationEmail(userEmail, name) {
     const subject = "Welcome to Backedn ladger"
-    const text = `Hello ${name},
+    const textTemplate = `Hello ${name},
 
                 Welcome to Ledger!
 
@@ -77,7 +81,7 @@ async function sendRegistrationEmail(userEmail, name) {
                 <td style="color:#444;font-size:16px;line-height:1.6;">
 
                     <p style="margin:0 0 16px 0;">
-                    Hello <strong>{{name}}</strong>,
+                    Hello <strong>${name}</strong>,
                     </p>
 
                     <p style="margin:0 0 16px 0;">
@@ -99,7 +103,7 @@ async function sendRegistrationEmail(userEmail, name) {
                 <!-- Button -->
                 <tr>
                 <td align="center" style="padding:20px 0;">
-                    <a href="{{login_url}}"
+                    <a href="https://ledgerapp.com/login"
                     style="background-color:#2563eb;color:#ffffff;text-decoration:none;padding:12px 24px;border-radius:6px;font-size:16px;display:inline-block;font-weight:bold;">
                     Go to Dashboard
                     </a>
@@ -136,11 +140,226 @@ async function sendRegistrationEmail(userEmail, name) {
     </body>
     </html>`
 
-    const html = htmlTemplate.replace("{{name}}", name).replace("{{login_url}}", "https://ledgerapp.com/login");
-
-    await sendEmail(userEmail, subject, text, html)
+    await sendEmail(userEmail, subject, textTemplate, htmlTemplate)
 }
 
+/**
+ * Transaction Completed Email 
+ * Sent only after transaction status is COMPLETED
+ */
+
+async function sendTransactionEmail(userEmail, name, amount, toAccount) {
+  
+  const subject= "Transaction Successful"
+
+  const htmlTemplate = `
+    <!DOCTYPE html>
+    <html>
+      <body style="margin:0;padding:0;background-color:#f4f6f8;font-family:Arial,Helvetica,sans-serif;">
+
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f8;padding:40px 0;">
+          <tr>
+          <td align="center">
+
+          <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;padding:30px;">
+
+          <!-- Header -->
+          <tr>
+            <td style="text-align:center;padding-bottom:20px;">
+              <h2 style="margin:0;color:#1a1a1a;">Transaction Successful</h2>
+            </td>
+          </tr>
+
+          <!-- Greeting -->
+          <tr>
+            <td style="font-size:16px;color:#444;line-height:1.6;">
+              <p style="margin:0 0 16px 0;">
+              Hello <strong>${name}</strong>,
+              </p>
+
+              <p style="margin:0 0 16px 0;">
+              Your transaction has been successfully completed.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Transaction Box -->
+          <tr>
+          <td>
+
+          <table width="100%" cellpadding="12" cellspacing="0" style="border:1px solid #eee;border-collapse:collapse;font-size:15px;">
+
+            <tr>
+            <td style="border:1px solid #eee;background:#fafafa;"><strong>Amount</strong></td>
+            <td style="border:1px solid #eee;font-weight:bold;">${amount}</td>
+            </tr>
+
+            <tr>
+            <td style="border:1px solid #eee;background:#fafafa;"><strong>Transferred To</strong></td>
+            <td style="border:1px solid #eee;">${toAccount}</td>
+            </tr>
+
+          </table>
+
+        </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td style="padding-top:25px;font-size:14px;color:#666;line-height:1.6;">
+          If you did not perform this transaction, please contact support immediately.
+          <br><br>
+          Best regards,<br>
+          <strong>Ledger Team</strong>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="border-top:1px solid #eee;margin-top:20px;padding-top:20px;text-align:center;color:#999;font-size:12px;">
+          © 2026 Ledger. All rights reserved.
+          </td>
+        </tr>
+
+        </table>
+
+        </td>
+        </tr>
+      </table>
+
+      </body>
+    </html>
+  `
+  const textTemplate = `
+
+    Hello ${name},
+
+    Your transaction has been successfully completed.
+
+    Transaction Details:
+    Amount: ${amount}
+    Transferred To: ${toAccount}
+
+    If you did not perform this transaction, please contact our support team immediately.
+
+    Best regards,
+    Ledger Team
+  `
+  await sendEmail(userEmail,subject,textTemplate, htmlTemplate)
+
+}
+
+/**
+ * Transaction Failed Email
+ */
+async function sendTransactionFaliourEmail(userEmail, name, amount, toAccount) {
+  const subject = "Transaction Failed"
+  const htmlTemplate = `
+    <!DOCTYPE html>
+    <html>
+      <body style="margin:0;padding:0;background-color:#f4f6f8;font-family:Arial,Helvetica,sans-serif;">
+
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f8;padding:40px 0;">
+          <tr>
+            <td align="center">
+
+            <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;padding:30px;">
+
+              <!-- Header -->
+              <tr>
+                <td style="text-align:center;padding-bottom:20px;">
+                <h2 style="margin:0;color:#dc2626;">Transaction Failed</h2>
+              </td>
+              </tr>
+
+              <!-- Greeting -->
+              <tr>
+                <td style="font-size:16px;color:#444;line-height:1.6;">
+                  <p style="margin:0 0 16px 0;">
+                  Hello <strong>${name}</strong>,
+                  </p>
+
+                  <p style="margin:0 0 16px 0;">
+                  Unfortunately, we were unable to process your recent transaction.
+                  </p>
+                </td>
+              </tr>
+
+              <!-- Transaction Details -->
+              <tr>
+                <td>
+                  <table width="100%" cellpadding="12" cellspacing="0" style="border:1px solid #eee;border-collapse:collapse;font-size:15px;">
+
+                  <tr>
+                    <td style="border:1px solid #eee;background:#fafafa;"><strong>Amount</strong></td>
+                    <td style="border:1px solid #eee;font-weight:bold;">${amount}</td>
+                  </tr>
+
+                  <tr>
+                    <td style="border:1px solid #eee;background:#fafafa;"><strong>Attempted To</strong></td>
+                    <td style="border:1px solid #eee;">${toAccount}</td>
+                  </tr>
+
+                  </table>
+
+                </td>
+              </tr>
+
+              <!-- Message -->
+              <tr>
+                <td style="padding-top:20px;font-size:14px;color:#666;line-height:1.6;">
+                  Please check your account details and try again later.
+
+                  <br><br>
+
+                  If you did not attempt this transaction, please contact our support team immediately.
+
+                  <br><br>
+
+                  Best regards,<br>
+                  <strong>Ledger Team</strong>
+                </td>
+              </tr>
+
+              <!-- Footer -->
+              <tr>
+                <td style="border-top:1px solid #eee;margin-top:20px;padding-top:20px;text-align:center;color:#999;font-size:12px;">
+                  © 2026 Ledger. All rights reserved.
+                </td>
+              </tr>
+
+            </table>
+
+            </td>
+          </tr>
+        </table>
+
+      </body>
+    </html>
+  `
+
+  const textTemplate = `
+    
+    Hello ${name},
+
+    We were unable to process your recent transaction.
+
+    Transaction Details:
+    Amount: ${amount}
+    Attempted To: ${toAccount}
+
+    Please check your account details or try again later.
+
+    If you did not attempt this transaction, contact our support team immediately.
+
+    Best regards,
+    Ledger Team `
+
+    await sendEmail(userEmail, subject, textTemplate, htmlTemplate)
+}
+
+
 module.exports = {
-    sendRegistrationEmail
+    sendRegistrationEmail,
+    sendTransactionEmail,
+    sendTransactionFaliourEmail
 }
