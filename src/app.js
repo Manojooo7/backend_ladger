@@ -17,7 +17,7 @@ const transactionRoutes = require("../src/routes/transaction.routes")
  * - Use Routes
  */
 app.get("/", (req,res)=>{
-    res.send(200).json({
+    return res.status(200).json({
         message: "Server is up and running"
     })
 })
